@@ -23,9 +23,7 @@ class Login extends StatelessWidget {
                   height: 50,
                 ),
                 Container(
-                  height: 180,
-                  
-                  child: Image.asset("asset/images/login.gif")),
+                    height: 180, child: Image.asset("asset/images/login.gif")),
                 Text(
                   "Login",
                   style: TextStyle(
@@ -64,21 +62,32 @@ class Login extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
+                  height: 25,
+                ),
+                Container(
+                  width: 300,
+                  child: CupertinoButton.filled(
+                      child: Text(
+                        "Login",
+                        style: TextStyle(
+                          fontFamily: "Gilroy",
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),
+                      ),
+                      onPressed: () => {Navigator.pushNamed(context, '/home')}),
+                ),
+                SizedBox(
                   height: 20,
                 ),
                 Container(
-                  width: 180,
-                  child: CupertinoButton.filled(
-                    
-                      child: Text("Login", style: TextStyle(
-                        fontFamily: "Gilroy",
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
-                      ),),
                   
-                      onPressed: () => {Navigator.pushNamed(context, '/home')}),
-                )
+                    width: 250,
+                    child: CupertinoButton(
+                        child: Text("New User? Register Now", style: TextStyle(decoration: TextDecoration.underline,decorationThickness: 1, color: Colors.white ),),
+                        onPressed: () =>
+                            {Navigator.pushNamed(context, '/signup')}))
               ],
             ),
           ))),
