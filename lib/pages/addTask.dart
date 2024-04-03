@@ -1,14 +1,15 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:to_do_app/model/quotes.dart';
 import 'package:to_do_app/model/user.dart';
 
-class Signup extends StatefulWidget {
+class AddTask extends StatefulWidget {
   @override
-  State<Signup> createState() => _SignupState();
+  State<AddTask> createState() => _AddTaskState();
 }
 
-class _SignupState extends State<Signup> {
+class _AddTaskState extends State<AddTask> {
   var formKey = GlobalKey<FormState>();
   String? selectedDateError;
 
@@ -17,12 +18,35 @@ class _SignupState extends State<Signup> {
   //year,month,day,hour,min
   DateTime dateTime = new DateTime(2000);
 
+  bool switchValue = true;
+
+  // bool addQuotes = false;
+
+  Quotes? quote;
+
   String? _validateDate(DateTime date) {
     final currentDate = DateTime.now();
-    if (date.isAfter(currentDate)) {
-      return "Selected date must be in the past";
+    if (date.isBefore(currentDate)) {
+      return "Selected date cannot be in the past";
     }
     return null;
+  }
+
+  Future<Quotes> getQuotes() async {
+    Quotes quotes = new Quotes();
+    return await quotes.fromJSON();
+  }
+
+  Future<void> fetchQuote() async {
+    try {
+      // Fetch quote
+      quote = await getQuotes();
+      // Update the UI
+      setState(() {});
+    } catch (e) {
+      print("Error fetching quote: $e");
+      // Handle error if needed
+    }
   }
 
   @override
@@ -38,7 +62,7 @@ class _SignupState extends State<Signup> {
               child: Column(
                 children: [
                   Text(
-                    "Create account",
+                    "Add Task",
                     style: TextStyle(
                       fontFamily: "Gilroy",
                       fontSize: 50,
@@ -51,7 +75,7 @@ class _SignupState extends State<Signup> {
                           borderRadius: BorderRadius.circular(10)),
                       backgroundColor: Colors.black,
                       header: Text(
-                        "Account",
+                        "Task",
                         style: TextStyle(
                             color: Color.fromARGB(255, 194, 191, 191),
                             fontFamily: "Gilroy",
@@ -60,101 +84,40 @@ class _SignupState extends State<Signup> {
                       children: [
                         CupertinoFormRow(
                           prefix: Text(
-                            "Email",
+                            "Title",
                             style: TextStyle(color: Colors.white),
                           ),
                           child: CupertinoTextFormFieldRow(
                               style: TextStyle(color: Colors.white),
-                              placeholder: 'Enter Email',
+                              placeholder: 'Enter Title',
                               placeholderStyle: TextStyle(
                                   color: Color.fromARGB(255, 129, 126, 126)),
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
                               textInputAction: TextInputAction.next,
-                              validator: (email) => email != null &&
-                                      !EmailValidator.validate(email)
-                                  ? 'Enter valid email'
-                                  : null),
+                              validator: (title) =>
+                                  title == null ? 'Title is required' : null),
                         ),
                         CupertinoFormRow(
                           prefix: Text(
-                            "Password",
+                            "Note",
                             style: TextStyle(color: Colors.white),
                           ),
                           child: CupertinoTextFormFieldRow(
-                            obscureText: true,
                             style: TextStyle(color: Colors.white),
-                            placeholder: 'Enter Password',
+                            placeholder: 'Add Note',
                             placeholderStyle: TextStyle(
                                 color: Color.fromARGB(255, 129, 126, 126)),
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
                             textInputAction: TextInputAction.next,
-                            validator: (password) {
-                              if (password == null || password.isEmpty) {
-                                return "Enter Valid Password";
-                              } else if (password.length < 8) {
-                                return "Must be at least 8 characters";
-                              } else {
-                                return null;
-                              }
-                            },
                           ),
                         ),
-                      ]),
-                  CupertinoFormSection.insetGrouped(
-                      decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 21, 20, 20),
-                          borderRadius: BorderRadius.circular(10)),
-                      backgroundColor: Colors.black,
-                      header: Text("Details",
-                          style: TextStyle(
-                              color: Color.fromARGB(255, 194, 191, 191),
-                              fontFamily: "Gilroy",
-                              fontSize: 16)),
-                      children: [
-                        CupertinoFormRow(
-                          prefix: Text(
-                            "Name",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          child: CupertinoTextFormFieldRow(
-                            style: TextStyle(color: Colors.white),
-                            placeholder: 'Enter Name',
-                            placeholderStyle: TextStyle(
-                                color: Color.fromARGB(255, 129, 126, 126)),
-                            textInputAction: TextInputAction.next,
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            validator: (name) {
-                              if (name == null || name.isEmpty) {
-                                return "Name is required";
-                              }
-                            },
-                          ),
-                        ),
-                        CupertinoFormRow(
-                          prefix: Text(
-                            "Username",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          child: CupertinoTextFormFieldRow(
-                            style: TextStyle(color: Colors.white),
-                            placeholder: 'Enter Username',
-                            placeholderStyle: TextStyle(
-                                color: Color.fromARGB(255, 129, 126, 126)),
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            validator: (name) {
-                              if (name == null || name.isEmpty) {
-                                return "Username is required";
-                              }
-                            },
-                          ),
-                        ),
+
+                        //add the date thing here
                         CupertinoFormRow(
                             prefix: Text(
-                              "Date of Birth",
+                              "Date of Completion",
                               style: TextStyle(color: Colors.white),
                             ),
                             child: Container(
@@ -202,7 +165,6 @@ class _SignupState extends State<Signup> {
                                 },
                               ),
                             )),
-                        
                         if (selectedDateError != null)
                           Text(
                             selectedDateError!,
@@ -211,7 +173,66 @@ class _SignupState extends State<Signup> {
                               fontSize: 16,
                             ),
                           ),
-                          SizedBox(height: 10)
+                        SizedBox(height: 5)
+                      ]),
+                  CupertinoFormSection.insetGrouped(
+                      decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 21, 20, 20),
+                          borderRadius: BorderRadius.circular(10)),
+                      backgroundColor: Colors.black,
+                      header: Text("Quote",
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 194, 191, 191),
+                              fontFamily: "Gilroy",
+                              fontSize: 16)),
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 5),
+                          child: CupertinoFormRow(
+                              helper: Text("Toggle switch to change quote",style: TextStyle(color: Color.fromARGB(255, 129, 126, 126),fontSize: 15),),
+                              prefix: Text(
+                                "Add Quote",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              child: CupertinoSwitch(
+                                  value: switchValue,
+                                  onChanged: (value) {
+                                    //add logic for getting the quote
+                                    setState(() {
+                                      switchValue = value;
+                                      if (value == true) {
+                                        fetchQuote();
+                                      }
+                                    });
+                                  })),
+                        ),
+                        if (quote != null && switchValue == true)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
+                                  child: Text(quote!.quote!,
+                                      style: TextStyle(color: Colors.white)),
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20),
+                                      child: Text("-" + quote!.author!,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          )),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          )
                       ]),
                   SizedBox(
                     height: 20,
@@ -219,13 +240,12 @@ class _SignupState extends State<Signup> {
                   Container(
                     width: 390,
                     child: CupertinoButton.filled(
-                        child: Text("Register"),
+                        child: Text("Create Task"),
                         onPressed: () {
                           final form = formKey.currentState!;
 
-                          if (form.validate() && selectedDateError==null) {
+                          if (form.validate() && selectedDateError == null) {
                             print("valid form");
-                            
                           }
                         }),
                   )

@@ -3,6 +3,8 @@ import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:to_do_app/model/todo.dart';
+import 'package:to_do_app/pages/addTask.dart';
+
 import 'package:to_do_app/pages/login.dart';
 import 'package:to_do_app/pages/signup.dart';
 
@@ -14,7 +16,8 @@ void main() {
       routes: {
         '/login': (context) => Login(),
         '/signup': (context) => Signup(),
-        "/home": (context) => MyApp()
+        "/home": (context) => MyApp(),
+        '/addTask':(context) => AddTask(),
       },
     ),
   );
@@ -86,6 +89,9 @@ class _MyAppState extends State<MyApp> {
               _currentIndex = index;
               if (index == 0) {
                 Navigator.pushNamed(context, '/login');
+              }
+              else if(index == 1) {
+                Navigator.pushNamed(context, '/addTask');
               }
             },
           ),
