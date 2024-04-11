@@ -1,8 +1,11 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:to_do_app/model/quotes.dart';
+import 'package:to_do_app/model/todo.dart';
 import 'package:to_do_app/model/user.dart';
+import 'package:to_do_app/provider/taskProvider.dart';
 
 class AddTask extends StatefulWidget {
   @override
@@ -15,10 +18,12 @@ class _AddTaskState extends State<AddTask> {
 
   User newUser = new User();
 
+  ToDo task= new ToDo();
+
   //year,month,day,hour,min
   DateTime dateTime = new DateTime(2000);
 
-  bool switchValue = true;
+  bool switchValue = false;
 
   // bool addQuotes = false;
 
@@ -42,7 +47,9 @@ class _AddTaskState extends State<AddTask> {
       // Fetch quote
       quote = await getQuotes();
       // Update the UI
-      setState(() {});
+      setState(() {
+        task.quote = quote;
+      });
     } catch (e) {
       print("Error fetching quote: $e");
       // Handle error if needed
@@ -51,6 +58,7 @@ class _AddTaskState extends State<AddTask> {
 
   @override
   Widget build(BuildContext context) {
+    final taskProvider = Provider.of<TaskProvider>(context,listen: false);
     return CupertinoApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -61,12 +69,22 @@ class _AddTaskState extends State<AddTask> {
               key: formKey,
               child: Column(
                 children: [
-                  Text(
-                    "Add Task",
-                    style: TextStyle(
-                      fontFamily: "Gilroy",
-                      fontSize: 50,
-                      color: Colors.white,
+                  
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      
+                      children: [
+                        Text(
+                          "Add Task",
+                          style: TextStyle(
+                            fontFamily: "Gilroy",
+                            fontSize: 50,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   CupertinoFormSection.insetGrouped(
@@ -92,11 +110,13 @@ class _AddTaskState extends State<AddTask> {
                               placeholder: 'Enter Title',
                               placeholderStyle: TextStyle(
                                   color: Color.fromARGB(255, 129, 126, 126)),
+                              onChanged: (value) => {task.title=value},
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
                               textInputAction: TextInputAction.next,
                               validator: (title) =>
                                   title == null ? 'Title is required' : null),
+                              
                         ),
                         CupertinoFormRow(
                           prefix: Text(
@@ -108,6 +128,7 @@ class _AddTaskState extends State<AddTask> {
                             placeholder: 'Add Note',
                             placeholderStyle: TextStyle(
                                 color: Color.fromARGB(255, 129, 126, 126)),
+                                onChanged: (value) => {task.note=value},
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
                             textInputAction: TextInputAction.next,
@@ -151,8 +172,11 @@ class _AddTaskState extends State<AddTask> {
                                                 initialDateTime: dateTime,
                                                 onDateTimeChanged:
                                                     (DateTime newDateTime) {
-                                                  setState(() =>
-                                                      dateTime = newDateTime);
+                                                  setState(() {
+                                                        dateTime = newDateTime;
+                                                        task.dateOfCompletion = dateTime;
+                                                  }   
+                                                      );
                                                   selectedDateError =
                                                       _validateDate(
                                                           newDateTime);
@@ -207,11 +231,12 @@ class _AddTaskState extends State<AddTask> {
                                   })),
                         ),
                         if (quote != null && switchValue == true)
+                          
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 10),
                             child: Column(
                               children: [
-                                Padding(
+                                Padding( 
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 20),
                                   child: Text(quote!.quote!,
@@ -243,12 +268,13 @@ class _AddTaskState extends State<AddTask> {
                         child: Text("Create Task"),
                         onPressed: () {
                           final form = formKey.currentState!;
-
+                          
                           if (form.validate() && selectedDateError == null) {
-                            print("valid form");
+                            taskProvider.addNewTask(task);
+                            Navigator.pushNamed(context, '/home');
                           }
                         }),
-                  )
+                  ),
                 ],
               ),
             ),

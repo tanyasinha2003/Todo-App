@@ -9,11 +9,19 @@ class Quotes{
     HttpHelper httpHelper = HttpHelper("https://zenquotes.io/api/");
     
     List<dynamic> responseData = await httpHelper.getData("random");
-   
+    // print(responseData);
     return Quotes(
       quote: responseData[0]['q'], 
       author: responseData[0]['a'], 
     );
+  }
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    print(this.quote);
+    print(this.author);
+    return super.toString();
   }
 }
 
