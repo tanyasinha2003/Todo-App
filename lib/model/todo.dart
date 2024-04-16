@@ -6,7 +6,7 @@ class ToDo {
   String note="";
   bool? isDone=false;
   Quotes? quote;
-  DateTime? dateOfCompletion;
+  DateTime dateOfCompletion= DateTime.now();
 
   @override
   String toString() {

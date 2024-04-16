@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:to_do_app/model/todo.dart';
+import 'package:to_do_app/provider/taskProvider.dart';
 
 class ToDoItem extends StatefulWidget {
   final ToDo task;
@@ -12,9 +14,10 @@ class ToDoItem extends StatefulWidget {
 
 class _ToDoItemState extends State<ToDoItem> {
   bool? _isChecked = false;
-
+  
   @override
   Widget build(BuildContext context) {
+    final taskProvider = Provider.of<TaskProvider>(context,listen: false);
     return Container(
       margin: EdgeInsets.only(bottom: 15),
       child: CheckboxListTile(
@@ -25,7 +28,8 @@ class _ToDoItemState extends State<ToDoItem> {
               ? TextStyle(
                   color: Colors.white,
                   fontFamily: "Gilroy",
-                  fontSize: 18,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
                   decoration: TextDecoration.none)
               : TextStyle(
                   color: const Color.fromARGB(255, 194, 191, 191),
@@ -37,7 +41,7 @@ class _ToDoItemState extends State<ToDoItem> {
                 ),
         ),
         subtitle: Text(
-          widget.task.note,
+          widget.task.note+"\n${widget.task.dateOfCompletion.day}/${widget.task.dateOfCompletion.month}/${widget.task.dateOfCompletion.year}",
           style: _isChecked == false
               ? TextStyle(color: Colors.white)
               : TextStyle(
@@ -70,7 +74,7 @@ class _ToDoItemState extends State<ToDoItem> {
             iconSize: 20,
             icon: Icon(Icons.delete),
             onPressed: () {
-              print("delete this task");
+              taskProvider.deleteTask(widget.task);
             },
           ),
         ),

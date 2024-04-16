@@ -115,7 +115,7 @@ class _AddTaskState extends State<AddTask> {
                                   AutovalidateMode.onUserInteraction,
                               textInputAction: TextInputAction.next,
                               validator: (title) =>
-                                  title == null ? 'Title is required' : null),
+                                  title == null || title=="" ? 'Title is required' : null),
                               
                         ),
                         CupertinoFormRow(

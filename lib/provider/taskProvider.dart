@@ -12,4 +12,9 @@ class TaskProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void deleteTask(ToDo todo){
+    taskList.remove(todo);
+    notifyListeners();
+  }
+
 }
